@@ -25,10 +25,10 @@ class TinyNN:
         return float(self.sigmoid(z))
 
     #Loss function determines our predicted outcome vs preffered (1 or 0) returns this vlaue (Binary Cross Entropy)
-    def loss(self, y_true: float, p_pred: float) -> float:
+    '''def loss(self, y_true: float, p_pred: float) -> float:
         eps = 1e-8  # prevents log(0)
         return - (y_true * np.log(p_pred + eps) + (1 - y_true) * np.log(1 - p_pred + eps))
-
+    '''
     #Gradient with respect to z -> dL/dz = p - y (=error)
     def gradients(self, x: np.ndarray, y: float):
         # make a prediction then find the error
@@ -44,12 +44,12 @@ class TinyNN:
 
         dw, db = self.gradients(x, y)
 
-        # Update parameters
+        # Update parameters wheights and biases based on the error calculated
         self.w -= self.lr * dw
         self.b -= self.lr * db
 
     # Train on all examples given an epoch
-    def fit(self, X: np.ndarray, y: np.ndarray, epochs: int = 50):
+    def fit(self, X: np.ndarray, y: np.ndarray, epochs):
 
         N = X.shape[0]
 
@@ -58,9 +58,10 @@ class TinyNN:
                 self.train_step(X[i], y[i])
 
     # Our average loss over the training
-    def average_loss(self, X: np.ndarray, y: np.ndarray) -> float:
+    ''' def average_loss(self, X: np.ndarray, y: np.ndarray) -> float:
         total = 0.0
         for i in range(len(y)):
             p = self.predict_proba(X[i])
             total += self.loss(y[i], p)
         return total / len(y)
+    '''
