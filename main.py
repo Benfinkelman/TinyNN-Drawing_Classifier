@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageTk
 import os
 
 from nn import TinyNN
+from rejection_rules import reject_reason
 
 CANVAS_SIZE = 300 
 BRUSH_SIZE = 10
@@ -140,12 +141,20 @@ class App:
             self.update_status("Train the model first")
             return
 
-        x = self.get_x_vector()
-        if float(x.sum()) < 1e-3:
-            self.update_status("No ink on canvas (draw first)")
+        x_vec = self.get_x_vector()
+        x50 = x_vec.reshape(50, 50)
+
+        ok, reason, _ = reject_reason(x50)
+        if not ok:
+            messagebox.showwarning("Invalid drawing", reason)
             return
 
-        p = self.model.predict_proba(x)
+        p = self.model.predict_proba(x_vec)
+
+        if p < 0.75:
+            self.update_status("Not sure — doesn't match A or B (try again).")
+            return
+        
         if p >= 0.5:
             label = "B"
             conf = p
@@ -156,12 +165,15 @@ class App:
         self.update_status(f"Prediction: {label} (confidence {conf:.2f})")
     
     def save_as_A(self):
-        x = self.get_x_vector()
-        if float(x.sum()) < 1e-3:
-            self.update_status("No ink on canvas (draw first)")
+        x_vec = self.get_x_vector()
+        x50 = x_vec.reshape(50, 50)
+
+        ok, reason, _ = reject_reason(x50)
+        if not ok:
+            messagebox.showwarning("Can't save sample", reason)
             return
 
-        self.X.append(x)
+        self.X.append(x_vec)
         self.y.append(0.0)
         self.count_A += 1
         self.trained = False  # data changed, model is now “out of date”
@@ -170,12 +182,15 @@ class App:
         self.update_status("Saved as A")
 
     def save_as_B(self):
-        x = self.get_x_vector()
-        if float(x.sum()) < 1e-3:
-            self.update_status("No ink on canvas (draw first)")
-            return
+        x_vec = self.get_x_vector()
+        x50 = x_vec.reshape(50, 50)
 
-        self.X.append(x)
+        ok, reason, _ = reject_reason(x50)
+        if not ok:
+            messagebox.showwarning("Can't save sample", reason)
+            return
+        
+        self.X.append(x_vec)
         self.y.append(1.0)
         self.count_B += 1
         self.trained = False
