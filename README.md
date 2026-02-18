@@ -1,4 +1,4 @@
-# Drawing NN BB
+# TinyNN Drawing Clasifier
 
 A minimal drawing app that uses a tiny 1-neuron neural network for **binary classification** (A vs B). Draw on the canvas, label examples as A or B, train the model, then get predictions. Includes rejection rules for invalid drawings and visualizations of model weights and per-pixel contributions.
 
