@@ -141,8 +141,8 @@ Because the model is **linear**, it does not understand shape, topology, or stro
 
 1. Clone the repository:
    ```bash
-   git clone <your-repo-url>
-   cd "Drawing NN BB"
+   git clone https://github.com/Benfinkelman/TinyNN-Drawing_Classifier
+   cd TinyNN-Drawing_Classifier
    ```
 
 2. Create and activate a virtual environment (recommended):
